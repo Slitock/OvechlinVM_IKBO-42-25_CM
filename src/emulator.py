@@ -45,3 +45,23 @@ def parse_line(line: str) -> list[str]:
         tokens.append("".join(current_token))
 
     return tokens
+
+
+# executing commads, return False to exit
+def run_commands(tokens: list[str]) -> bool:
+    if not tokens:
+        return True
+
+    cmd, args = tokens[0], tokens[1:]
+
+    match cmd:
+        case "exit":
+            return False
+        case "ls":
+            print(f"Command {cmd} executed with args: {args}")
+        case "cd":
+            print(f"Command {cmd} executed with args: {args}")
+        case _:
+            print(f"emulator: command {cmd} not found")
+
+    return True
