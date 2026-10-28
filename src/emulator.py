@@ -65,3 +65,33 @@ def run_commands(tokens: list[str]) -> bool:
             print(f"emulator: command {cmd} not found")
 
     return True
+
+
+# run interface
+def repl() -> None:
+    while True:
+        try:
+            raw_input = input(get_prompt())
+        except (EOFError, KeyboardInterrupt):
+            print()
+            break
+
+        if not raw_input.strip():
+            continue
+
+        try:
+            tokens = parse_line(raw_input.strip())
+        except ValueError as err:
+            print(f"emulator: parse error: {err}")
+            continue
+
+        if not run_command(tokens):
+            break
+
+
+def main() -> None:
+    repl()
+
+
+if __name__ == "__main__":
+    main()
