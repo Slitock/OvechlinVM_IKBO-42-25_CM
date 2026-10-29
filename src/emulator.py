@@ -1,5 +1,6 @@
 """CLI shell prototype."""
 
+import sys
 from getpass import getuser
 from os import getcwd
 from socket import gethostname
@@ -67,6 +68,31 @@ def run_command(tokens: list[str]) -> bool:
     return True
 
 
+def run_script(script_path: str) -> None:
+    """execute scripts"""
+    try:
+        with open(script_path, "r", encoding="utf-8") as file:
+            for line in file:
+                clean_line = line.strip()
+
+                if not clean_line or clean_line.startswith("#"):
+                    continue
+                print(f"{get_prompt()}{clean_line}")
+
+                try:
+                    tokens = parse_line(clean_line)
+
+                except ValueError:
+                    print(f"emulator: parse error: {ValueError}")
+                    continue
+
+                if not run_command(tokens):
+                    break
+
+    except FileNotFoundError:
+        print(f"emulator: script not found: {script_path}")
+
+
 def repl() -> None:
     """Run interactive REPL loop."""
     while True:
@@ -91,7 +117,31 @@ def repl() -> None:
 
 def main() -> None:
     """Application entry point."""
-    repl()
+    vfs_path = None
+    script_path = None
+
+    args = sys.argv[1:]
+    i = 0
+
+    while i < len(args):
+        if args[i] in ("--vfs", "-v") and i + 1 < len(args):
+            vfs_path = args[i + 1]
+            i += 2
+        elif args[i] in ("--script", "-sc") and i + 1 < len(args):
+            script_path = args[i + 1]
+            i += 2
+        else:
+            i += 1
+
+    print("=== Emulator configuration ===")
+    print(f"VFS path: {vfs_path}")
+    print(f"Script path: {script_path}")
+    print("==============================")
+
+    if script_path:
+        run_script(script_path)
+    else:
+        repl()
 
 
 if __name__ == "__main__":
