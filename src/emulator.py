@@ -115,6 +115,24 @@ def repl() -> None:
             break
 
 
+def print_config_box(vfs_path: str | None, script_path: str | None) -> None:
+    """Print emulator configuration in a nice ASCII box."""
+    title = "Emulator configuration"
+    line_vfs = f"VFS path: {vfs_path}"
+    line_script = f"Script path: {script_path}"
+
+    # Находим самую длинную строку, чтобы задать ширину рамки
+    width = max(len(title), len(line_vfs), len(line_script))
+
+    # Рисуем рамку
+    print("┌" + "─" * (width + 2) + "┐")
+    print("│ " + title.center(width) + " │")
+    print("├" + "─" * (width + 2) + "┤")
+    print("│ " + line_vfs.ljust(width) + " │")
+    print("│ " + line_script.ljust(width) + " │")
+    print("└" + "─" * (width + 2) + "┘")
+
+
 def main() -> None:
     """Application entry point."""
     vfs_path = None
@@ -133,10 +151,11 @@ def main() -> None:
         else:
             i += 1
 
-    print("=== Emulator configuration ===")
-    print(f"VFS path: {vfs_path}")
-    print(f"Script path: {script_path}")
-    print("==============================")
+        # print("=== Emulator configuration ===")
+        # print(f"|VFS path: {vfs_path}       |")
+        # print(f"|Script path: {script_path} |")
+        # print("==============================")
+    print_config_box(vfs_path, script_path)
 
     if script_path:
         run_script(script_path)
