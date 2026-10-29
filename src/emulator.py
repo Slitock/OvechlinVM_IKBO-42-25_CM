@@ -1,20 +1,20 @@
-# CLI shell protoripe
+"""CLI shell prototype."""
 
 import getpass
 import socket
 import os
 
 
-# return promt based on OS username and hostname
-def get_promt() -> str:
+def get_prompt() -> str:
+    """Return prompt based on OS username and hostname."""
     username = getpass.getuser()
     hostname = socket.gethostname()
     cur_dir = os.getcwd()
     return f"{username}@{hostname}:{cur_dir}> "
 
 
-# input parser
 def parse_line(line: str) -> list[str]:
+    """Parse input string manually, preserving quoted arguments."""
     tokens = []
     current_token = []
     in_quotes = False
@@ -47,12 +47,12 @@ def parse_line(line: str) -> list[str]:
     return tokens
 
 
-# executing commads, return False to exit
-def run_commands(tokens: list[str]) -> bool:
+def run_command(tokens: list[str]) -> bool:
+    """Execute built-in commands, return False to exit."""
     if not tokens:
         return True
 
-    cmd, args = tokens[0], tokens[1:]
+    cmd, *args = tokens
 
     match cmd:
         case "exit":
@@ -67,8 +67,8 @@ def run_commands(tokens: list[str]) -> bool:
     return True
 
 
-# run interface
 def repl() -> None:
+    """Run interactive REPL loop."""
     while True:
         try:
             raw_input = input(get_prompt())
@@ -90,6 +90,7 @@ def repl() -> None:
 
 
 def main() -> None:
+    """Application entry point."""
     repl()
 
 
