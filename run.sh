@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-python3 src/emulator.py "$@"
+PYTHONPATH=. python3 src/emulator.py "$@"
 

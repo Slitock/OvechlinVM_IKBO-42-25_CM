@@ -2,15 +2,17 @@
 
 import sys
 from getpass import getuser
-from os import getcwd
 from socket import gethostname
 
 
-def get_prompt() -> str:
+from src.vfs import VFS 
+
+
+def get_prompt(vfs: VFS | None) -> str:
     """Return prompt based on OS username and hostname."""
     username = getuser()
     hostname = gethostname()
-    cur_dir = getcwd()
+    cur_dir = vfs.pwd if vfs else "/"
     return f"{username}@{hostname}:{cur_dir}> "
 
 
@@ -48,7 +50,7 @@ def parse_line(line: str) -> list[str]:
     return tokens
 
 
-def run_command(tokens: list[str]) -> bool:
+def run_command(tokens: list[str], vfs: VFS | None) -> bool:
     """Execute built-in commands, return False to exit."""
     if not tokens:
         return True
@@ -59,16 +61,25 @@ def run_command(tokens: list[str]) -> bool:
         case "exit":
             return False
         case "ls":
-            print(f"Command {cmd} executed with args: {args}")
+            if vfs:
+                items = vfs.ls()
+                if items:
+                    print(" ".join(items))
+            else:
+                print("emulator: VFS not loaded")
         case "cd":
-            print(f"Command {cmd} executed with args: {args}")
+            if vfs:
+                target = args[0] if args else "/"
+                vfs.cd(target)
+            else:
+                print("emulator: VFS not loaded")
         case _:
             print(f"emulator: command {cmd} not found")
 
     return True
 
 
-def run_script(script_path: str) -> None:
+def run_script(script_path: str, vfs: VFS | None) -> None:
     """execute scripts"""
     try:
         with open(script_path, "r", encoding="utf-8") as file:
@@ -77,7 +88,7 @@ def run_script(script_path: str) -> None:
 
                 if not clean_line or clean_line.startswith("#"):
                     continue
-                print(f"{get_prompt()}{clean_line}")
+                print(f"{get_prompt(vfs)}{clean_line}")
 
                 try:
                     tokens = parse_line(clean_line)
@@ -86,18 +97,18 @@ def run_script(script_path: str) -> None:
                     print(f"emulator: parse error: {ValueError}")
                     continue
 
-                if not run_command(tokens):
+                if not run_command(tokens, vfs):
                     break
 
     except FileNotFoundError:
         print(f"emulator: script not found: {script_path}")
 
 
-def repl() -> None:
+def repl(vfs: VFS | None) -> None:
     """Run interactive REPL loop."""
     while True:
         try:
-            raw_input = input(get_prompt())
+            raw_input = input(get_prompt(vfs))
         except (EOFError, KeyboardInterrupt):
             print()
             break
@@ -111,7 +122,7 @@ def repl() -> None:
             print(f"emulator: parse error: {err}")
             continue
 
-        if not run_command(tokens):
+        if not run_command(tokens, vfs):
             break
 
 
@@ -151,10 +162,12 @@ def main() -> None:
 
     print_config_box(vfs_path, script_path)
 
+    vfs = VFS(vfs_path) if vfs_path else None
+
     if script_path:
-        run_script(script_path)
+        run_script(script_path, vfs)
     else:
-        repl()
+        repl(vfs)
 
 
 if __name__ == "__main__":
