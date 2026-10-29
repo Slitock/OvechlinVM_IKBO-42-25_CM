@@ -13,7 +13,7 @@ def get_prompt(vfs: VFS | None) -> str:
     username = getuser()
     hostname = gethostname()
     cur_dir = vfs.pwd if vfs else "/"
-    return f"{username}@{hostname}:{cur_dir}> "
+    return f"{username}@{hostname}:{cur_dir} >  "
 
 
 def parse_line(line: str) -> list[str]:
