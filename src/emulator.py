@@ -1,11 +1,12 @@
 """CLI shell prototype."""
 
+
 import sys
+from datetime import datetime, timezone
 from getpass import getuser
 from socket import gethostname
 
-
-from src.vfs import VFS 
+from src.vfs import VFS
 
 
 def get_prompt(vfs: VFS | None) -> str:
@@ -73,6 +74,8 @@ def run_command(tokens: list[str], vfs: VFS | None) -> bool:
                 vfs.cd(target)
             else:
                 print("emulator: VFS not loaded")
+        case "date":
+            print(datetime.now(timezone.utc).astimezone().strftime("%a %b %d %H:%M:%S %Y"))
         case _:
             print(f"emulator: command {cmd} not found")
 

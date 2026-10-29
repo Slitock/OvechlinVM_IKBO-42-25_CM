@@ -10,5 +10,6 @@ cd not_exist
 cd report.txt
 # Возвращаемся в корень
 cd /
+date
 # Выходим из эмулятора
 exit
