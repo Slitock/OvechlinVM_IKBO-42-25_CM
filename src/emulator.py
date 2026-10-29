@@ -1,8 +1,8 @@
 """CLI shell prototype."""
 
 from getpass import getuser
-from socket import gethostname
 from os import getcwd
+from socket import gethostname
 
 
 def get_prompt() -> str:
