@@ -1,15 +1,15 @@
 """CLI shell prototype."""
 
-import getpass
-import socket
-import os
+from getpass import getuser
+from socket import gethostname
+from os import getcwd
 
 
 def get_prompt() -> str:
     """Return prompt based on OS username and hostname."""
-    username = getpass.getuser()
-    hostname = socket.gethostname()
-    cur_dir = os.getcwd()
+    username = getuser()
+    hostname = gethostname()
+    cur_dir = getcwd()
     return f"{username}@{hostname}:{cur_dir}> "
 
 
