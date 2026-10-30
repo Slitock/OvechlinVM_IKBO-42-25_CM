@@ -11,5 +11,6 @@ cd report.txt
 # Возвращаемся в корень
 cd /
 date
+tail
 # Выходим из эмулятора
 exit

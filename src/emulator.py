@@ -1,6 +1,5 @@
 """CLI shell prototype."""
 
-
 import sys
 from datetime import datetime, timezone
 from getpass import getuser
@@ -75,7 +74,28 @@ def run_command(tokens: list[str], vfs: VFS | None) -> bool:
             else:
                 print("emulator: VFS not loaded")
         case "date":
-            print(datetime.now(timezone.utc).astimezone().strftime("%a %b %d %H:%M:%S %Y"))
+            print(
+                datetime.now(timezone.utc).astimezone().strftime("%a %b %d %H:%M:%S %Y")
+            )
+        case "tail":
+            if vfs:
+                if not args:
+                    print("tail: missing file operand")
+                else:
+                    lines = vfs.read_file(args[0])
+                    if lines is not None:
+                        for line in lines[-10:]:
+                            print(line)
+            else:
+                print("emulator: VFS not loaded")
+        case "rmdir":
+            if vfs:
+                if not args:
+                    print("rmdir: missing operand")
+                else:
+                    vfs.rmdir(args[0])
+            else:
+                print("emulator: VFS not loaded")
         case _:
             print(f"emulator: command {cmd} not found")
 
